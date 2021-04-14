@@ -1,0 +1,6 @@
+web/node_modules
+web/build
+# server/db.sqlite3
+.vscode
+.DS_Store
+*.pdf
