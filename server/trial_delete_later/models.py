@@ -14,4 +14,15 @@ class Case(models.Model):
     date_of_confirmation_of_infection_by_testing = models.DateField()
 
     def _str_(self):
-        return self.case_number
+        return self.person_name
+
+class Event(models.Model):
+    vanue_name = models.CharField(max_length=50)
+    vanue_location = models.CharField(max_length=256)
+    #address_of_the_venue_location
+    #hk1980_grid_coordinates_of_the_venue_location
+    date_of_the_event = models.DateField()
+    brief_description_of_the_event = models.CharField(max_length=256)
+    def _str_(self):
+        return self.venue_name
+
