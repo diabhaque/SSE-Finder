@@ -15,13 +15,16 @@ class Case(models.Model):
     def _str_(self):
         return self.person_name
 
+
 class Event(models.Model):
+    Cases = models.ManyToManyField(Case)
+    date_of_the_event = models.DateField()
     vanue_name = models.CharField(max_length=50)
     vanue_location = models.CharField(max_length=256)
     address_of_the_venue_location = models.CharField(max_length=256)
     hk1980_grid_coordinates_of_the_venue_location = models.CharField(max_length=256)
-    date_of_the_event = models.DateField()
-    brief_description_of_the_event = models.CharField(max_length=256)
+    description_of_the_event = models.CharField(max_length=256)
     count = models.IntegerField(default=0)
+
     def _str_(self):
         return self.venue_name
