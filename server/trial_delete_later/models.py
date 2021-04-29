@@ -1,16 +1,18 @@
 from django.db import models
-
+from datetime import datetime
 # Create your models here.
 
 class Case(models.Model):
-    case_number = models.UUIDField(
-                primary_key=True,
-                editable=False)
+    case_number = models.AutoField(primary_key=True)
+                # models.UUIDField(
+                # primary_key=True,
+                # default=1,
+                # editable=False)
     person_name = models.CharField(max_length=50)
-    identify_document_number = models.CharField(max_length=50, unique=True)
-    date_of_birth = models.DateField()
-    date_of_onset_of_symptoms = models.DateField()
-    date_of_confirmation_of_infection_by_testing = models.DateField()
+    identity_document_number = models.CharField(max_length=50, unique=True, default="0000000")
+    date_of_birth = models.DateField(default=datetime.now, blank=True)
+    date_of_onset_of_symptoms = models.DateField(default=datetime.now, blank=True)
+    date_of_confirmation_of_infection_by_testing = models.DateField(default=datetime.now, blank=True)
 
     def _str_(self):
         return self.person_name

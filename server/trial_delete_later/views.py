@@ -1,10 +1,12 @@
 from django.shortcuts import render
 from rest_framework import viewsets
+from django.http import HttpResponse
 from .serializers import CaseSerializer
 from .models import Case
 
 # Create your views here.
 
-class CaseViewSet(viewsets.ModelViewSet): 
-    serializer_class = CaseSerializer
-    queryset = Case.objects.all()
+def CaseViewSet(request):
+    return HttpResponse("Hello, world. You're at the polls index.")
+    #serializer_class = CaseSerializer
+    #queryset = Case.objects.all()
