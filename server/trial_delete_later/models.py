@@ -5,7 +5,6 @@ from django.db import models
 class Case(models.Model):
     case_number = models.UUIDField(
                 primary_key=True,
-                default=uuid.uuid4,
                 editable=False)
     person_name = models.CharField(max_length=50)
     identify_document_number = models.CharField(max_length=50, unique=True)
@@ -25,4 +24,3 @@ class Event(models.Model):
     brief_description_of_the_event = models.CharField(max_length=256)
     def _str_(self):
         return self.venue_name
-
