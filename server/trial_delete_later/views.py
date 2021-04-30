@@ -4,6 +4,7 @@ from .serializers import CaseSerializer
 from .models import Case
 
 # Create your views here.
-def CaseViewSet(request):
-    #serializer_class = CaseSerializer
+def CaseViewSet(viewsets.ModelViewSet):
     queryset = Case.objects.all()
+    serializer_class = CaseSerializer
+    

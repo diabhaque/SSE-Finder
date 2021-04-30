@@ -10,7 +10,7 @@ from django.urls import path
 app_name='trial_delete_later'
 urlpatterns = [
     # ex: /polls/
-    path('', views.CaseViewSet, name='CaseViewSet'),
+    path('cases/', views.CaseViewSet, name='CaseViewSet'),
 
 ]
 
