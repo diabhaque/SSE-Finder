@@ -60,7 +60,7 @@ export const Home: React.FC<HomeProps> = ({ children }) => {
                         {children}
                     </div>
                 </Content>
-                <Footer style={{ textAlign: "center" }}>Made by Group K.</Footer>
+                <Footer style={{ textAlign: "center" }}></Footer>
             </MyLayout>
         </MyLayout>
     );

@@ -79,14 +79,11 @@ export const CaseData = (props: any) => {
                     setVisible(false);
                 }}
             />
+            <br/>
             <Descriptions
                 title="Case Details"
                 layout="horizontal"
                 size="small"
-                style={{
-                    paddingTop: "1vh",
-                    paddingBottom: "3vh"
-                }}
                 bordered
             >
                 <Descriptions.Item label="Case Number">
@@ -108,7 +105,7 @@ export const CaseData = (props: any) => {
                     {hardCode.dateOfCaseConfirmed}
                 </Descriptions.Item>
             </Descriptions>
-
+            <br/>
             <div className="ant-descriptions-header">
                 <div className="ant-descriptions-title">
                     Social Events attended
