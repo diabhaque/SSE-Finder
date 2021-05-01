@@ -1,8 +1,9 @@
 import { Layout, Menu, Typography } from "antd";
+import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./home.css";
 
-const { Header, Content, Sider } = Layout;
+const { Header, Content, Sider, Footer } = Layout;
 const { Title } = Typography;
 
 const MyMenu = Menu as any; // Ugly, but will try fixing later. Maybe.
@@ -54,11 +55,12 @@ export const Home: React.FC<HomeProps> = ({ children }) => {
                 <Content style={{ margin: "24px 16px 0" }}>
                     <div
                         className="site-layout-background"
-                        style={{ padding: 24, minHeight: 360 }}
+                        style={{ padding: 24, height: '100%', overflowY: 'auto' }}
                     >
                         {children}
                     </div>
                 </Content>
+                <Footer style={{ textAlign: "center" }}>Made by Group K.</Footer>
             </MyLayout>
         </MyLayout>
     );
