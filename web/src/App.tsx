@@ -1,25 +1,12 @@
 import "./App.css";
-import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-} from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Home } from "./home/Home";
+import { CaseRecordsPage } from "./components/CaseRecordsPage";
+import { AddCasePage } from "./components/AddCasePage";
+import { FindSsePage } from "./components/FindSsePage";
+import { CaseData } from "./components/CaseData";
 
-// Move components to separate page.
-
-const CaseRecordsPage = () => {
-    return <div>Case Records</div>;
-};
-
-const FindSsePage = () => {
-    return <div>Find SSEs</div>;
-};
-const AddCasePage = () => {
-    return <div>Add Case</div>;
-};
-
-const SideBarLayout = () => {
+const HomeNavigation = () => {
     return (
         <Home>
             <Switch>
@@ -32,6 +19,9 @@ const SideBarLayout = () => {
                 <Route exact path="/add-case">
                     <AddCasePage />
                 </Route>
+                <Route exact path="/case-data/:id">
+                    <CaseData />
+                </Route>
             </Switch>
         </Home>
     );
@@ -43,7 +33,7 @@ function App() {
             <Router>
                 <Switch>
                     <Route path="/">
-                        <SideBarLayout />
+                        <HomeNavigation />
                     </Route>
                 </Switch>
             </Router>
