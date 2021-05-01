@@ -19,8 +19,8 @@ class Case(models.Model):
 class Event(models.Model):
     Cases = models.ManyToManyField(Case)
     date_of_the_event = models.DateField()
-    vanue_name = models.CharField(max_length=50)
-    vanue_location = models.CharField(max_length=256)
+    venue_name = models.CharField(max_length=50)
+    venue_location = models.CharField(max_length=256)
     address_of_the_venue_location = models.CharField(max_length=256)
     hk1980_grid_coordinates_of_the_venue_location = models.CharField(max_length=256)
     description_of_the_event = models.CharField(max_length=256)
