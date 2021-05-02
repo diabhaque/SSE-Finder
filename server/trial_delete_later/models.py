@@ -3,9 +3,9 @@ from django.db import models
 # Create your models here.
 
 class Case(models.Model):
-    case_number = models.UUIDField(
-                primary_key=True,
-                editable=False)
+    case_number = models.AutoField(primary_key=True) #models.UUIDField(
+    #             primary_key=True,
+    #             editable=False)
     person_name = models.CharField(max_length=50)
     identify_document_number = models.CharField(max_length=50, unique=True)
     date_of_birth = models.DateField()
@@ -17,7 +17,7 @@ class Case(models.Model):
 
 
 class Event(models.Model):
-    Cases = models.ManyToManyField(Case)
+    #Cases = models.ManyToManyField(Case)
     date_of_the_event = models.DateField()
     venue_name = models.CharField(max_length=50)
     venue_location = models.CharField(max_length=256)
@@ -25,6 +25,6 @@ class Event(models.Model):
     hk1980_grid_coordinates_of_the_venue_location = models.CharField(max_length=256)
     description_of_the_event = models.CharField(max_length=256)
     count = models.IntegerField(default=0)
-    
+
     def _str_(self):
         return self.venue_name
