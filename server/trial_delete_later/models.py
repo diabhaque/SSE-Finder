@@ -17,7 +17,7 @@ class Case(models.Model):
 
 
 class Event(models.Model):
-    #Cases = models.ManyToManyField(Case)
+    Cases = models.ManyToManyField(Case)
     date_of_the_event = models.DateField()
     venue_name = models.CharField(max_length=50)
     venue_location = models.CharField(max_length=256)
