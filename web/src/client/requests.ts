@@ -2,7 +2,7 @@ import { Case } from "../types/caseTypes_trial";
 import { getHostName } from "./utils";
 
 export const getCases = (): Promise<Case[] | null> => {
-    const url = new URL(`http://${getHostName()}/api/cases`);
+    const url = new URL(`https://${getHostName()}/api/cases`);
     const request = new Request(url.toString());
     
     return fetch(request)
@@ -15,7 +15,7 @@ export const getCases = (): Promise<Case[] | null> => {
 };
 
 export const getCase = (caseID: String): Promise<Case | null> => {
-    const url = new URL(`http://${getHostName()}/api/cases/${caseID}`);
+    const url = new URL(`https://${getHostName()}/api/cases/${caseID}`);
     const request = new Request(url.toString());
     
     return fetch(request)
@@ -28,7 +28,7 @@ export const getCase = (caseID: String): Promise<Case | null> => {
 };
 
 export const postCase = (postCase: Case): Promise<Case | null> => {
-    const url = new URL(`http://${getHostName()}/api/cases/`);
+    const url = new URL(`https://${getHostName()}/api/cases/`);
     
     return fetch(url.toString(), {
         method: "POST",
