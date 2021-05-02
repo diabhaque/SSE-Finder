@@ -1,13 +1,30 @@
 import { useLocation } from "react-router-dom";
 import { Descriptions, Table, Button } from "antd";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Case } from "../types/caseTypes_trial";
 import { AddEventDataModal } from "./AddEventDataModal";
+import { getCase } from "../client/requests"
 
 export const CaseData = (props: any) => {
     const location = useLocation();
     const caseID = location.pathname.split("/")[2];
     // should be loaded with useeffect and set to state.
     const [visible, setVisible] = useState(false);
+
+    const [caseData, setCaseData] = useState<Case | null>({
+        case_number: null,
+        person_name: null,
+        identify_document_number: null,
+        date_of_birth: null,
+        date_of_onset_of_symptoms: null,
+        date_of_confirmation_of_infection_by_testing: null
+    });
+
+    useEffect(() => {
+        getCase(caseID).then((fetchedCase: Case | null) => {
+            setCaseData(fetchedCase)
+        })
+    }, [caseID]);
 
     const onCreate = (values: any) => {
         console.log("Received values of form: ", values);
@@ -27,16 +44,6 @@ export const CaseData = (props: any) => {
     };
 
     const [eventsData, setEventsData] = useState<any>([]);
-
-    // Should be queried using the case id
-    const hardCode = {
-        caseNumber: 53,
-        personName: "Chan, Tai Man",
-        idNumber: "A123456(1)",
-        dateOfBirth: "13 Nov 1982",
-        dateOfOnset: "15 Apr 2021",
-        dateOfCaseConfirmed: "17 Apr 2021"
-    };
 
     const columns = [
         {
@@ -87,22 +94,22 @@ export const CaseData = (props: any) => {
                 bordered
             >
                 <Descriptions.Item label="Case Number">
-                    {hardCode.caseNumber}
+                    {caseData?.case_number}
                 </Descriptions.Item>
                 <Descriptions.Item label="Person Name">
-                    {hardCode.personName}
+                    {caseData?.person_name}
                 </Descriptions.Item>
                 <Descriptions.Item label="ID Document Number">
-                    {hardCode.idNumber}
+                    {caseData?.identify_document_number}
                 </Descriptions.Item>
                 <Descriptions.Item label="Date of Birth">
-                    {hardCode.dateOfBirth}
+                    {caseData?.date_of_birth}
                 </Descriptions.Item>
                 <Descriptions.Item label="Date of Onset">
-                    {hardCode.dateOfOnset}
+                    {caseData?.date_of_onset_of_symptoms}
                 </Descriptions.Item>
                 <Descriptions.Item label="Date of Case Confirmed">
-                    {hardCode.dateOfCaseConfirmed}
+                    {caseData?.date_of_confirmation_of_infection_by_testing}
                 </Descriptions.Item>
             </Descriptions>
             <br/>

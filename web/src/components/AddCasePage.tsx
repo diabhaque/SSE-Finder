@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Redirect, useHistory } from "react-router-dom";
+import { Case } from "../types/caseTypes_trial";
 import { Form, Input, Button, Spin, DatePicker } from "antd";
+import { postCase } from "../client/requests"
 
 export const AddCasePage = () => {
     const history = useHistory();
@@ -11,21 +13,22 @@ export const AddCasePage = () => {
     const onFinish = async (values: any) => {
         setLoading(true);
         const formData = {
-            caseNumber: values.caseNumber,
-            personName: values.surname + ", " + values.otherNames,
-            idNumber: values.idNumber,
-            dateOfBirth: values.dateOfBirth.format("DD-MM-YYYY"),
-            dateOfOnset: values.dateOfOnset.format("DD-MM-YYYY"),
-            dateOfCaseConfirmed: values.dateOfCaseConfirmed.format("DD-MM-YYYY")
+            case_number: null,
+            person_name: values.surname + ", " + values.otherNames,
+            identify_document_number: values.idNumber,
+            date_of_birth: values.dateOfBirth.format("YYYY-MM-DD"),
+            date_of_onset_of_symptoms: values.dateOfOnset.format("YYYY-MM-DD"),
+            date_of_confirmation_of_infection_by_testing: values.dateOfCaseConfirmed.format("YYYY-MM-DD")
         };
-
-        await new Promise((r) => setTimeout(r, 1000));
-        // POST request to the backend. 
-        // If success, redirect to 
-
-        console.log(formData);
-        setLoading(false);
-        history.push(`/case-data/${formData.caseNumber}`);
+        postCase(formData).then((newCase: Case | null) => {
+            console.log(newCase)
+            setLoading(false);
+            if (newCase && newCase.case_number) {
+                history.push(`/case-data/${newCase?.case_number}`);
+            }
+        }).catch((err) => {
+            //Error handling: For example duplicate identify_document_number
+        })
     };
 
     const onFinishFailed = (errorInfo: any) => {
@@ -43,20 +46,6 @@ export const AddCasePage = () => {
                 onFinishFailed={onFinishFailed}
                 scrollToFirstError
             >
-                <Form.Item
-                    name="caseNumber"
-                    label="Case Number"
-                    validateTrigger="onBlur"
-                    rules={[
-                        {
-                            required: true,
-                            message: "Please input Case Number"
-                        }
-                    ]}
-                >
-                    <Input />
-                </Form.Item>
-
                 <Form.Item
                     name="surname"
                     label="Surname"
