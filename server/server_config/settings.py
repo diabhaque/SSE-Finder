@@ -38,11 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # setting cors policy: necessary for UI to Backend Comms
-    'corsheaders',
+    'corsheaders',# uncomment later !!!!!!!!!!!!!!!!!
     # rest_framework: DUHH!
     'rest_framework',
     # Used for boilerplate, delete later
-    "trial_delete_later"
+    "trial_delete_later",
 ]
 
 MIDDLEWARE = [
