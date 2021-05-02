@@ -4,6 +4,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import CaseSerializer, EventSerializer
 from .models import Case, Event
+# Create your views here.
 
 # Create your views here.
 #Viewset is unused now.
@@ -23,7 +24,7 @@ def case_list(request):
         cases = Case.objects.all()
         serializer = CaseSerializer(cases, many=True)
         return Response(serializer.data)
-    
+
     elif request.method == 'POST':
         serializer = CaseSerializer(data=request.data)
         if serializer.is_valid():
@@ -45,14 +46,14 @@ def case_detail(request, case_id):
     if request.method == 'GET':
         serializer = CaseSerializer(case)
         return Response(serializer.data)
-    
+
     elif request.method == 'PUT':
         serializer = CaseSerializer(case, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
     elif request.method == 'DELETE':
         case.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -88,14 +89,14 @@ def event_detail(request, pk):
     if request.method == 'GET':
         serializer = EventSerializer(event)
         return Response(serializer.data)
-    
+
     elif request.method == 'PUT':
         serializer = CaseSerializer(event, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
     elif request.method == 'DELETE':
         event.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -115,10 +116,17 @@ def event_related(request, case_id):
     if request.method == 'GET':
         serializer = EventSerializer(events, many=True)
         return Response(serializer.data)
-    
+
     elif request.method == 'PUT':
-        
+
     elif request.method == 'DELETE':
         events.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-        
+"""
+def CaseViewSet(request):
+    #return HttpResponse("Hello, world. You're at the polls index.")
+    #serializer_class = CaseSerializer
+    queryset = Case.objects.all()
+    output = ', '.join([q.person_name for q in queryset])
+    return HttpResponse(output)
+"""
