@@ -102,6 +102,16 @@ def event_detail(request, pk):
         event.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+@api_view(['POST'])
+def event_case_add(request, pk, case_id):
+    try:
+        event = Event.objects.get(pk=pk)
+    except Event.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    try:
+        case = Case.objects.get(case_number=case_id)
+    except Case.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
 #e.g.: /api/events/cases/1
 #GET:       get all event records of case_number=1 (DISPLAY)
