@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '8@j&b&&diw49^a$9cocesweagzb=oz6%n=!jy#_zxl=f)vgb8f'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     'sse-finder-group-k.herokuapp.com',
