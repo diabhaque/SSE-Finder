@@ -27,6 +27,7 @@ def case_list(request):
 
     elif request.method == 'POST':
         serializer = CaseSerializer(data=request.data)
+        print(serializer.is_valid)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -117,11 +118,12 @@ def event_related(request, case_id):
         serializer = EventSerializer(events, many=True)
         return Response(serializer.data)
 
-    elif request.method == 'PUT':
+    #elif request.method == 'PUT':
 
     elif request.method == 'DELETE':
         events.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
 """
 def CaseViewSet(request):
     #return HttpResponse("Hello, world. You're at the polls index.")
