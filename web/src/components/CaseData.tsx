@@ -21,10 +21,14 @@ export const CaseData = (props: any) => {
     });
 
     useEffect(() => {
-        getCase(caseID).then((fetchedCase: Case | null) => {
-            setCaseData(fetchedCase)
-        })
-    }, [caseID]);
+        if (location?.state) {
+            setCaseData(location.state as Case)
+        } else {
+            getCase(caseID).then((fetchedCase: Case | null) => {
+                setCaseData(fetchedCase)
+            })
+        }
+    }, [caseID, location]);
 
     const onCreate = (values: any) => {
         console.log("Received values of form: ", values);

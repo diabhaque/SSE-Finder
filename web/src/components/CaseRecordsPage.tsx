@@ -1,8 +1,8 @@
-import { Input, Table } from "antd";
+import { Input, Table, message } from "antd";
 import { useHistory } from "react-router-dom"
 import { Case } from "../types/caseTypes_trial";
 import React, { useState, useEffect } from "react";
-import { getCases } from "../client/requests"
+import { getCases, getCase } from "../client/requests"
 const { Search } = Input
 
 export const CaseRecordsPage = () => {
@@ -25,7 +25,17 @@ export const CaseRecordsPage = () => {
     }, []);
 
     const onSearch = (caseNumber: String) => {
-        history.push(`/case-data/${caseNumber}`);
+        getCase(caseNumber).then((fetchedCase: Case | null) => {
+            // Catch query errors (Since requests.ts return null if error, need to catch on .then)
+            if (!fetchedCase) {
+                message.error('Case number not found!');
+                return;
+            }
+            history.push({
+                pathname: `/case-data/${caseNumber}`,
+                state: fetchedCase
+              });
+        })
     }
 
     const columns = [
