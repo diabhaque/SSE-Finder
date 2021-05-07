@@ -13,11 +13,8 @@ urlpatterns = [
     path('cases/', views.case_list, name='case_list'),
     path('cases/<int:case_id>', views.case_detail, name='case_detail'),
     path('events/', views.event_list, name='event_list'),
-    path('events/<int:pk>', views.event_detail, name='event_detail'),
-    path('sse/<str:start>/<str:end>', views.compute_sse, name='compute_sse')
-    path('add/events/<int:pk>/cases/<int:case_id>', views.event_case_add, name='event_related'),
-    path('events/cases/<int:pk>', views.event_related_to_case, name='event_related'),
-    path('cases/events/<int:pk>', views.case_related_to_event, name='case_related'),
+    path('events/<int:case_id>', views.event_detail, name='event_detail'),
+    path('sse/<str:start>/<str:end>', views.compute_sse, name='compute_sse'),
  
 ]
 
@@ -33,16 +30,12 @@ urlpatterns = [
 
 #/api/events
 #GET:       get all event records (DISPLAY)
-#POST:      add new event record (CREATE)
+
 
 #e.g.: /api/events/1
-#GET:       get event record of pk=1 (DISPLAY)
-#PUT:       update event record of pk=1 (UPDATE)
-#DELETE:    delete event record of pk=1 (REMOVE)
+#GET:       get event record of case_id = 1 (DISPLAY)
+#POST:      add event record of case_id = 1 (CREATE)
 
-#e.g.: /api/events/cases/1
-#GET:       get all event records of case_number=1 (DISPLAY)
-#DELETE:    delete event record of case_number=1 (REMOVE)
 
 #######################################
 
