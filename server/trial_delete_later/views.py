@@ -5,6 +5,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import CaseSerializer, EventSerializer
 from .models import Case, Event
+import datetime
+
+
 # Create your views here.
 
 # Create your views here.
