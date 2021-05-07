@@ -157,20 +157,7 @@ def case_related_to_event(request, pk):
         events.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-@api_view(['GET'])
-def compute_sse(request):
-    sses = []
-    event = Event.objects.all()
-    places = list(dict.fromkeys([i.venue_location for i in event]))#remove duplicate
-    for i in places:
-        #compute sse
-        evt = Event.objects.filter(venue_location=i)
-        if len(evt) >= 6:
-            sses.append(i)
-    out = {
-        "sse" : sses
-    }
-    return  json.dumps(out)
+
 
 """
 def CaseViewSet(request):

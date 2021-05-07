@@ -18,7 +18,7 @@ urlpatterns = [
     path('add/events/<int:pk>/cases/<int:case_id>', views.event_case_add, name='event_related'),
     path('events/cases/<int:pk>', views.event_related_to_case, name='event_related'),
     path('cases/events/<int:pk>', views.case_related_to_event, name='case_related'),
-    path('sse/', views.compute_sse, name='compute_sse')
+    path('sse', views.compute_sse, name='compute_sse')
 ]
 
 ######################################
