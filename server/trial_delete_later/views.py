@@ -5,6 +5,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import CaseSerializer, EventSerializer
 from .models import Case, Event
+import datetime
+
+
 # Create your views here.
 
 # Create your views here.
@@ -157,20 +160,32 @@ def case_related_to_event(request, pk):
         events.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+
 @api_view(['GET'])
-def compute_sse(request):
-    sses = []
-    event = Event.objects.all()
+def compute_sse(request, start, end):
+    start_date = datetime.datetime.strptime(start, "%Y-%m-%d").date()
+    end_date = datetime.datetime.strptime(end, "%Y-%m-%d").date()
+    #print(start_date)
+    #print(end_date)
+    sse_query = Event.objects.none()
+    print(sse_query)
+    event = Event.objects.filter(date_of_the_event__gte=start_date).filter(date_of_the_event__lte=end_date)
+    print(event)
     places = list(dict.fromkeys([i.venue_location for i in event]))#remove duplicate
+    print(places)
     for i in places:
         #compute sse
-        evt = Event.objects.filter(venue_location=i)
-        if len(evt) >= 6:
-            sses.append(i)
-    out = {
-        "sse" : sses
-    }
-    return  json.dumps(out)
+        evt = event.filter(venue_location=i)
+        counts = Case.objects.filter(event__venue_location=i).count()
+        print(counts)
+        evt.update(count=counts)
+        if counts >= 6:
+            sse_query = sse_query | evt
+
+    serializer = EventSerializer(sse_query, many=True)
+    return  Response(serializer.data)
+
 
 """
 def CaseViewSet(request):
