@@ -103,7 +103,7 @@ def event_detail(request, pk):
         event.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-@api_view(['POST'])
+@api_view(['GET'])
 def event_case_add(request, pk, case_id):
     try:
         event = Event.objects.get(pk=pk)
@@ -113,15 +113,19 @@ def event_case_add(request, pk, case_id):
         case = Case.objects.get(case_number=case_id)
     except Case.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
+    event.Cases.add(case)
+    return Response(status=status.HTTP_201_CREATED)
+
 
 #e.g.: /api/events/cases/1
 #GET:       get all event records of case_number=1 (DISPLAY)
 #DELETE:    delete event record of case_number=1 (REMOVE)
 
 @api_view(['GET', 'DELETE'])
-def event_related(request, case_id):
+def event_related_to_case(request, pk):
     try:
-        events = Event.objects.filter(Cases__case_number=case_id)
+        events = Event.objects.filter(Cases__case_number=pk)
+        print(events)
     except Event.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -133,7 +137,25 @@ def event_related(request, case_id):
 
     elif request.method == 'DELETE':
         events.delete()
-    return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['GET', 'DELETE'])
+def case_related_to_event(request, pk):
+    try:
+        cases = Case.objects.filter(event__pk=pk)
+        print(cases)
+    except Case.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = CaseSerializer(cases, many=True)
+        return Response(serializer.data)
+
+    #elif request.method == 'PUT':
+
+    elif request.method == 'DELETE':
+        events.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['GET'])
 def compute_sse(request):
