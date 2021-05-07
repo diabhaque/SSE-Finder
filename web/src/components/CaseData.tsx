@@ -36,6 +36,8 @@ export const CaseData = (props: any) => {
             venueName: values.venueName,
             venueLocation: values.venueLocation,
             address: values.address,
+            x: values.x,
+            y: values.y,
             dateOfEvent: values.dateOfEvent.format("DD-MM-YYYY"),
             descriptions: values.descriptions
         };
@@ -64,6 +66,16 @@ export const CaseData = (props: any) => {
             title: "Address",
             dataIndex: "address",
             key: "address"
+        },
+        {
+            title: "HK1980 X Coordinate",
+            dataIndex: "x",
+            key: "x"
+        },
+        {
+            title: "HK1980 Y Coordinate",
+            dataIndex: "y",
+            key: "y"
         },
         {
             title: "Date of Event",
