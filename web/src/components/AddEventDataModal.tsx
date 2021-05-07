@@ -1,4 +1,6 @@
 import { Modal, Form, Input, DatePicker } from "antd";
+import { createRef } from "react";
+import { getLocation } from "../client/requests"
 
 interface AddEventDataModalProps {
     visible: boolean;
@@ -12,6 +14,22 @@ export const AddEventDataModal = ({
     onCancel
 }: AddEventDataModalProps) => {
     const [form] = Form.useForm();
+    const formRef: any = createRef();
+
+    //Leaving all as any for now, save time
+    const handleLocationChange = (event: any) => {
+        getLocation(event.target.value).then((fetchedLocation: any) => {
+            if (fetchedLocation) {
+                formRef.current.setFieldsValue({
+                    address: fetchedLocation.addressEN,
+                    x: fetchedLocation.x,
+                    y: fetchedLocation.y
+                  });
+            }
+        })
+    };
+
+
     return (
         <Modal
             visible={visible}
@@ -32,6 +50,7 @@ export const AddEventDataModal = ({
         >
             <Form
                 form={form}
+                ref={formRef}
                 layout="vertical"
                 name="form_in_modal"
                 initialValues={{ modifier: "public" }}
@@ -59,7 +78,7 @@ export const AddEventDataModal = ({
                         }
                     ]}
                 >
-                    <Input />
+                    <Input onChange={handleLocationChange} />
                 </Form.Item>
 
                 <Form.Item
@@ -74,6 +93,33 @@ export const AddEventDataModal = ({
                 >
                     <Input />
                 </Form.Item>
+
+                <Form.Item
+                    name="x"
+                    label="HK1980 X Coordinate"
+                    rules={[
+                        {
+                            required: true,
+                            message: "Please input the X Coordinate"
+                        }
+                    ]}
+                >
+                    <Input />
+                </Form.Item>
+
+                <Form.Item
+                    name="y"
+                    label="HK1980 Y Coordinate"
+                    rules={[
+                        {
+                            required: true,
+                            message: "Please input the Y Coordinate"
+                        }
+                    ]}
+                >
+                    <Input />
+                </Form.Item>
+
                 <Form.Item
                     name="dateOfEvent"
                     label="Date Of Event"

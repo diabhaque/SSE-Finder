@@ -44,3 +44,19 @@ export const postCase = (postCase: Case): Promise<Case | null> => {
         return null
     });
 };
+
+export const getLocation = (locationString: string): Promise<Array<Object> | null> => {
+    const url = new URL(`https://geodata.gov.hk/gs/api/v1.0.0/locationSearch?q=${encodeURI(locationString)}`);
+    console.log(url.toString())
+    return fetch(url.toString(), {
+        method: "GET"
+    })
+    .then((r) => r.json())
+    //From document: we can assume to use the first result as the location
+    .then((r) => r[0] as Array<Object>)
+    .catch((err) => {
+        console.log(err.response)
+        return null
+    });
+};
+
