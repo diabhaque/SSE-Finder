@@ -8,9 +8,9 @@ class Case(models.Model):
     #             editable=False)
     person_name = models.CharField(max_length=50)
     identify_document_number = models.CharField(max_length=50)
-    date_of_birth = models.CharField(max_length=50) #models.DateField()
-    date_of_onset_of_symptoms = models.CharField(max_length=50) #models.DateField()
-    date_of_confirmation_of_infection_by_testing = models.CharField(max_length=50) #models.DateField()
+    date_of_birth = models.DateField()
+    date_of_onset_of_symptoms = models.DateField()
+    date_of_confirmation_of_infection_by_testing = models.DateField()
 
     def _str_(self):
         return self.person_name
