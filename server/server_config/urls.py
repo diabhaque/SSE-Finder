@@ -15,12 +15,14 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from .views import index
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('admin', admin.site.urls),
     path('api/', include('sse_finder_api.urls')),
-    path('', index)
+    path('api', include('sse_finder_api.urls')),
+    re_path(r'^(?!api).*$', index, name="index"),
 
 ]
