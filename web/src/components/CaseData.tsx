@@ -274,8 +274,6 @@ export const CaseData = (props: any) => {
                 }} 
                 columns={columns}
                 dataSource={eventsData}
-                scroll={{ y: "45vh" }}
-                pagination={false}
                 rowKey={"id"}
             />
         </>
