@@ -1,3 +1,3 @@
 export const getHostName = (): string => {
-    return "localhost:8000"
+    return "sse-finder-group-k.herokuapp.com"
 };
