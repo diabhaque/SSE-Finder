@@ -1,1 +1,15 @@
 @import '~antd/dist/antd.css';
+
+.ant-table-tbody > tr.ant-table-row:hover > td {
+    background-color: #1890ff;
+    color: white;
+    cursor: pointer;
+}
+
+.ant-table-tbody > tr.ant-table-row:hover > td::selection {
+    background-color: black;
+}
+
+.ant-table-tbody > tr.ant-table-row > td {
+    transition: all .3s;
+}

@@ -5,6 +5,7 @@ import { CaseRecordsPage } from "./components/CaseRecordsPage";
 import { AddCasePage } from "./components/AddCasePage";
 import { FindSsePage } from "./components/FindSsePage";
 import { CaseData } from "./components/CaseData";
+import { EventData } from "./components/EventData";
 
 const HomeNavigation = () => {
     return (
@@ -21,6 +22,9 @@ const HomeNavigation = () => {
                 </Route>
                 <Route exact path="/case-data/:id">
                     <CaseData />
+                </Route>
+                <Route exact path="/event-data/:id">
+                    <EventData />
                 </Route>
             </Switch>
         </Home>

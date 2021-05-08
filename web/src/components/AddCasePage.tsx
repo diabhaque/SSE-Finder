@@ -1,13 +1,14 @@
 import { useState } from "react";
-import { Redirect, useHistory } from "react-router-dom";
+import { /*Redirect,*/ useHistory } from "react-router-dom";
 import { Case } from "../types/caseTypes_trial";
-import { Form, Input, Button, Spin, DatePicker } from "antd";
-import { postCase } from "../client/requests"
+import { Form, Input, Button, Spin, DatePicker, message } from "antd";
+import { postCase } from "../client/requests";
+import moment from "moment";
 
 export const AddCasePage = () => {
     const history = useHistory();
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(false);
+    //const [error, setError] = useState(false);
     const [form] = Form.useForm();
 
     const onFinish = async (values: any) => {
@@ -18,17 +19,22 @@ export const AddCasePage = () => {
             identify_document_number: values.idNumber,
             date_of_birth: values.dateOfBirth.format("YYYY-MM-DD"),
             date_of_onset_of_symptoms: values.dateOfOnset.format("YYYY-MM-DD"),
-            date_of_confirmation_of_infection_by_testing: values.dateOfCaseConfirmed.format("YYYY-MM-DD")
+            date_of_confirmation_of_infection_by_testing: values.dateOfCaseConfirmed.format(
+                "YYYY-MM-DD"
+            )
         };
         postCase(formData).then((newCase: Case | null) => {
-            console.log(newCase)
+            if (!newCase) {
+                message.error("Cannot add the case to server!");
+                setLoading(false);
+                return;
+            }
+            console.log(newCase);
             setLoading(false);
-            if (newCase && newCase.case_number) {
+            if (newCase.case_number) {
                 history.push(`/case-data/${newCase?.case_number}`);
             }
-        }).catch((err) => {
-            //Error handling: For example duplicate identify_document_number
-        })
+        });
     };
 
     const onFinishFailed = (errorInfo: any) => {
@@ -97,10 +103,32 @@ export const AddCasePage = () => {
                         {
                             required: true,
                             message: "Please select Date of Birth"
-                        }
+                        },
+                        ({ getFieldValue }) => ({
+                            validator(_, value) {
+                                if (!value) {
+                                    return Promise.resolve();
+                                }
+
+                                if (
+                                    moment(value) >
+                                        moment(getFieldValue("dateOfOnset")) ||
+                                    moment(value) >
+                                        moment(getFieldValue("dateOfOnset"))
+                                ) {
+                                    return Promise.reject(
+                                        new Error(
+                                            "Date of Birth cannot be later than Date of Onset and Date of Case Confirmed!"
+                                        )
+                                    );
+                                }
+
+                                return Promise.resolve();
+                            }
+                        })
                     ]}
                 >
-                    <DatePicker />
+                    <DatePicker defaultPickerValue={moment("1990-01-01")} />
                 </Form.Item>
 
                 <Form.Item

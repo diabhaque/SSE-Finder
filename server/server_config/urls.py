@@ -19,5 +19,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('trial_delete_later.urls'))
+    # path('api/', include('trial_delete_later.urls'))
+    path('api/', include('sse_finder_api.urls'))
+
 ]

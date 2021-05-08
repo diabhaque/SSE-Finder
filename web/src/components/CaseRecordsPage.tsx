@@ -1,42 +1,52 @@
 import { Input, Table, message } from "antd";
-import { useHistory } from "react-router-dom"
+import { useHistory } from "react-router-dom";
 import { Case } from "../types/caseTypes_trial";
 import React, { useState, useEffect } from "react";
-import { getCases, getCase } from "../client/requests"
-const { Search } = Input
+import { getCases, getCase } from "../client/requests";
+const { Search } = Input;
 
 export const CaseRecordsPage = () => {
-
     const history = useHistory();
 
-    const [caseData, setCaseData] = useState<any>([{
-        case_number: null,
-        person_name: null,
-        identify_document_number: null,
-        date_of_birth: null,
-        date_of_onset_of_symptoms: null,
-        date_of_confirmation_of_infection_by_testing: null
-    }]);
+    const [caseData, setCaseData] = useState<any>([
+        {
+            case_number: null,
+            person_name: null,
+            identify_document_number: null,
+            date_of_birth: null,
+            date_of_onset_of_symptoms: null,
+            date_of_confirmation_of_infection_by_testing: null
+        }
+    ]);
 
     useEffect(() => {
         getCases().then((cases: Case[] | null) => {
-            setCaseData(cases)
-        })
+            if (!cases) {
+                message.error("Cannot retrieve cases!");
+            }
+            setCaseData(cases);
+        });
     }, []);
 
-    const onSearch = (caseNumber: String) => {
-        getCase(caseNumber).then((fetchedCase: Case | null) => {
+    const onSearch = (caseNumber: string) => {
+        const caseNumberInt = parseInt(caseNumber);
+        if (!caseNumberInt) {
+            message.error("Please enter a number!");
+            return;
+        }
+        getCase(caseNumberInt.toString()).then((fetchedCase: Case | null) => {
             // Catch query errors (Since requests.ts return null if error, need to catch on .then)
+            console.log(fetchedCase);
             if (!fetchedCase) {
-                message.error('Case number not found!');
+                message.error("Case number not found!");
                 return;
             }
             history.push({
-                pathname: `/case-data/${caseNumber}`,
+                pathname: `/case-data/${caseNumberInt.toString()}`,
                 state: fetchedCase
-              });
-        })
-    }
+            });
+        });
+    };
 
     const columns = [
         {
@@ -73,8 +83,19 @@ export const CaseRecordsPage = () => {
 
     return (
         <div>
-            <Search placeholder="Enter case number"  onSearch={onSearch} />
+            <Search
+                placeholder="Enter case number"
+                onSearch={onSearch}
+                style={{ marginBottom: 16 }}
+            />
             <Table
+                onRow={(record, rowIndex) => {
+                    return {
+                        onClick: (event) => {
+                            history.push(`/case-data/${record.case_number}`);
+                        }
+                    };
+                }}
                 rowKey="case_number"
                 columns={columns}
                 dataSource={caseData}
