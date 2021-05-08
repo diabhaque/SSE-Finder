@@ -153,12 +153,12 @@ export const CaseData = (props: any) => {
                     ) : (
                         <></>
                     )}
-                    {moment(record.date_of_the_event).isBetween(
-                        moment(caseData?.date_of_onset_of_symptoms).add(
+                    {moment(caseData?.date_of_onset_of_symptoms).isBetween(
+                        moment(record.date_of_the_event).add(
                             2,
                             "days"
                         ),
-                        moment(caseData?.date_of_onset_of_symptoms).add(
+                        moment(record.date_of_the_event).add(
                             14,
                             "days"
                         ),
