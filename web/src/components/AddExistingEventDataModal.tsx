@@ -21,9 +21,11 @@ export const AddExistingEventDataModal = ({
     const [form] = Form.useForm();
     const formRef: any = createRef();
 
-    const remainingEvents = alreadyAddedEvents ? allEvents.filter((event: any) => {
-        return !alreadyAddedEvents.includes(event.id);
-    }) : [];
+    const remainingEvents = alreadyAddedEvents
+        ? allEvents.filter((event: any) => {
+              return !alreadyAddedEvents.includes(event.id);
+          })
+        : [];
 
     const options = remainingEvents.map((event) => (
         <Option key={event.id} value={event.id}>
@@ -66,9 +68,13 @@ export const AddExistingEventDataModal = ({
                         }
                     ]}
                 >
-                    <Select onChange={(value)=>{
-                        form.setFieldsValue({'eventID': value})
-                    }}>{options}</Select>
+                    <Select
+                        onChange={(value) => {
+                            form.setFieldsValue({ eventID: value });
+                        }}
+                    >
+                        {options}
+                    </Select>
                 </Form.Item>
             </Form>
         </Modal>

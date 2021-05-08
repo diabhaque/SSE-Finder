@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom"
+import { useHistory } from "react-router-dom";
 import { Button, DatePicker, Form, Spin, Table, message } from "antd";
 import { getEvents } from "../client/requests";
 
@@ -21,31 +21,30 @@ export const FindSsePage = () => {
         await new Promise((r) => setTimeout(r, 1000));
         // get request to the backend.
 
-        getEvents()
-            .then((fetchedEvents: any | null) => {
-                //setAllEventsData(fetchedEvents);
-                if (fetchedEvents) {
-                    const fetchedSseData = fetchedEvents.filter(
-                        (fetchedEvent: any) => {
-                            return (
-                                fetchedEvent.cases.length >= 6 &&
-                                new Date(fetchedEvent.date_of_the_event) <=
-                                    new Date(formData.to) &&
-                                new Date(fetchedEvent.date_of_the_event) >=
-                                    new Date(formData.from)
-                            );
-                        }
-                    );
-                    console.log(fetchedSseData);
-                    if (fetchedSseData.length === 0) {
-                        message.warning('No SSE found within the date range!');
+        getEvents().then((fetchedEvents: any | null) => {
+            //setAllEventsData(fetchedEvents);
+            if (fetchedEvents) {
+                const fetchedSseData = fetchedEvents.filter(
+                    (fetchedEvent: any) => {
+                        return (
+                            fetchedEvent.cases.length >= 6 &&
+                            new Date(fetchedEvent.date_of_the_event) <=
+                                new Date(formData.to) &&
+                            new Date(fetchedEvent.date_of_the_event) >=
+                                new Date(formData.from)
+                        );
                     }
-                    setSseData(fetchedSseData);
-                    setLoading(false);
-                } else {
-                    message.error('Cannot retrieve events!');
+                );
+                console.log(fetchedSseData);
+                if (fetchedSseData.length === 0) {
+                    message.warning("No SSE found within the date range!");
                 }
-            })
+                setSseData(fetchedSseData);
+                setLoading(false);
+            } else {
+                message.error("Cannot retrieve events!");
+            }
+        });
     };
 
     const onFinishFailed = (errorInfo: any) => {
@@ -134,15 +133,17 @@ export const FindSsePage = () => {
                 </Form.Item>
             </Form>
             <br />
-            <Table 
+            <Table
                 onRow={(record, rowIndex) => {
                     return {
-                        onClick: event => {history.push(`/event-data/${record.id}`)}
+                        onClick: (event) => {
+                            history.push(`/event-data/${record.id}`);
+                        }
                     };
-                }} 
-                columns={columns} 
-                dataSource={sseData} 
-                rowKey="id" 
+                }}
+                columns={columns}
+                dataSource={sseData}
+                rowKey="id"
             />
         </div>
     );

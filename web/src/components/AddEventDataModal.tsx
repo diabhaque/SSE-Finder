@@ -1,6 +1,6 @@
 import { Modal, Form, Input, DatePicker, message, Button } from "antd";
 import { createRef } from "react";
-import { getLocation } from "../client/requests"
+import { getLocation } from "../client/requests";
 
 interface AddEventDataModalProps {
     visible: boolean;
@@ -16,24 +16,23 @@ export const AddEventDataModal = ({
     disabledDate
 }: AddEventDataModalProps) => {
     const [form] = Form.useForm();
-    const formRef: any = createRef();   
+    const formRef: any = createRef();
 
     //Leaving all as any for now, save time
     const getAddress = () => {
         const venueLocation = formRef.current.getFieldValue("venueLocation");
         getLocation(venueLocation).then((fetchedLocation: any) => {
             if (!fetchedLocation) {
-                message.error('Cannot get location from GeoData!');
+                message.error("Cannot get location from GeoData!");
                 return;
             }
             formRef.current.setFieldsValue({
                 address: fetchedLocation.addressEN,
                 x: fetchedLocation.x,
                 y: fetchedLocation.y
-                });
-        })
+            });
+        });
     };
-
 
     return (
         <Modal
@@ -83,14 +82,14 @@ export const AddEventDataModal = ({
                         }
                     ]}
                 >
-                    <div style={{display: "flex"}}>
+                    <div style={{ display: "flex" }}>
                         <Input />
                         <Button
                             onClick={getAddress}
                             type="primary"
-                            style={{marginLeft: 16}}
+                            style={{ marginLeft: 16 }}
                         >
-                                Get Address
+                            Get Address
                         </Button>
                     </div>
                 </Form.Item>

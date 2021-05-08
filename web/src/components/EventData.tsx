@@ -1,9 +1,7 @@
 import { useLocation, useHistory } from "react-router-dom";
 import { Descriptions, Table, message, Tag } from "antd";
 import { useState, useEffect } from "react";
-import {
-    getEvent
-} from "../client/requests";
+import { getEvent } from "../client/requests";
 import moment from "moment";
 
 export const EventData = (props: any) => {
@@ -25,12 +23,12 @@ export const EventData = (props: any) => {
     useEffect(() => {
         getEvent(eventID).then((fetchedEvent: any) => {
             if (!fetchedEvent) {
-                message.error('Cannot find the event!');
+                message.error("Cannot find the event!");
                 return;
             }
             setEventData(fetchedEvent);
             console.log(fetchedEvent);
-        })
+        });
     }, [eventID, location]);
     const columns = [
         {
@@ -64,25 +62,39 @@ export const EventData = (props: any) => {
             key: "date_of_confirmation_of_infection_by_testing"
         },
         {
-            title: 'Associations',
-            key: 'associations',
+            title: "Associations",
+            key: "associations",
             render: (text: any, record: any) => (
                 <>
                     {moment(eventData.date_of_the_event).isBetween(
-                        moment(record.date_of_onset_of_symptoms).subtract(3, "days"),
+                        moment(record.date_of_onset_of_symptoms).subtract(
+                            3,
+                            "days"
+                        ),
                         record.date_of_confirmation_of_infection_by_testing,
                         "day",
                         "[]"
-                    ) ? <Tag color="volcano">Possible Infector</Tag> : <></>}
+                    ) ? (
+                        <Tag color="volcano">Possible Infector</Tag>
+                    ) : (
+                        <></>
+                    )}
                     {moment(eventData.date_of_the_event).isBetween(
                         moment(record.date_of_onset_of_symptoms).add(2, "days"),
-                        moment(record.date_of_onset_of_symptoms).add(14, "days"),
+                        moment(record.date_of_onset_of_symptoms).add(
+                            14,
+                            "days"
+                        ),
                         "day",
                         "[]"
-                    ) ? <Tag color="lime">Possibly Infected</Tag> : <></>}
+                    ) ? (
+                        <Tag color="lime">Possibly Infected</Tag>
+                    ) : (
+                        <></>
+                    )}
                 </>
-            ),
-        },
+            )
+        }
     ];
 
     return (
@@ -121,20 +133,20 @@ export const EventData = (props: any) => {
             </Descriptions>
             <br />
             <div className="ant-descriptions-header">
-                <div className="ant-descriptions-title">
-                    Cases associated
-                </div>
+                <div className="ant-descriptions-title">Cases associated</div>
             </div>
             <Table
                 onRow={(record, rowIndex) => {
                     return {
-                        onClick: event => {history.push(`/case-data/${record.case_number}`)}
+                        onClick: (event) => {
+                            history.push(`/case-data/${record.case_number}`);
+                        }
                     };
-                }} 
+                }}
                 dataSource={eventData?.cases}
                 columns={columns}
                 rowKey={"case_number"}
             />
         </>
     );
-}
+};

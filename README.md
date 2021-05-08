@@ -7,7 +7,7 @@ Error Handling. Update all queries. Show message error if null is received. Stre
 
 Click case -> case details (Done)
 
-Pagination? 
+Pagination? (Done, using default pagination)
 
 Date of birth default date (Done)
 

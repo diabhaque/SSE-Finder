@@ -38,31 +38,38 @@ export const CaseData = (props: any) => {
     useEffect(() => {
         getCase(caseID).then((fetchedCase: Case | null) => {
             if (!fetchedCase) {
-                message.error('Cannot find the case!');
+                message.error("Cannot find the case!");
                 return;
             }
             setCaseData(fetchedCase);
             console.log(fetchedCase?.events);
             setButtonDisable(false);
-            getEvents().then((fetchedEvents: any | null) => {  
+            getEvents().then((fetchedEvents: any | null) => {
                 if (!fetchedEvents) {
-                    message.error('Cannot find the events of the case!');
+                    message.error("Cannot find the events of the case!");
                     return;
                 }
-                setAllEventsData(fetchedEvents.filter((fetchedEvent: any) => {
-                    return moment(fetchedEvent.date_of_the_event) >= moment(fetchedCase?.date_of_onset_of_symptoms).subtract(14,"days") 
-                        && 
-                    moment(fetchedEvent.date_of_the_event) < moment(fetchedCase?.date_of_confirmation_of_infection_by_testing).endOf("day")
-                }));
-                setEventsData(
+                setAllEventsData(
                     fetchedEvents.filter((fetchedEvent: any) => {
-                        return fetchedCase?.events.includes(
-                            fetchedEvent.id
+                        return (
+                            moment(fetchedEvent.date_of_the_event) >=
+                                moment(
+                                    fetchedCase?.date_of_onset_of_symptoms
+                                ).subtract(14, "days") &&
+                            moment(fetchedEvent.date_of_the_event) <
+                                moment(
+                                    fetchedCase?.date_of_confirmation_of_infection_by_testing
+                                ).endOf("day")
                         );
                     })
                 );
+                setEventsData(
+                    fetchedEvents.filter((fetchedEvent: any) => {
+                        return fetchedCase?.events.includes(fetchedEvent.id);
+                    })
+                );
             });
-        })
+        });
     }, [caseID, location]);
 
     const onCreate = (values: any) => {
@@ -76,31 +83,29 @@ export const CaseData = (props: any) => {
             description_of_the_event: values.descriptions
         };
 
-        postEvent(formData)
-            .then((newEvent: any | null) => {
-                if (!newEvent) {
-                    message.error("Cannot post the event!");
-                    setVisible(false);
-                    return;
-                }
-                console.log(newEvent);
-                // setLoading(false);
-                const newEventID = newEvent.id;
-                if (newEventID) {
-                    patchEventToCase(caseData?.case_number, {
-                        events: [...caseData?.events, newEventID]
-                    })
-                        .then((patchedCase: any | null) => {
-                            if (!patchedCase) {
-                                message.error('Cannot patch event to the case!');
-                                setVisible(false);
-                                return;
-                            }
-                            console.log(newEvent);
-                            setEventsData([...eventsData, newEvent]);
-                        })
-                }
-            })
+        postEvent(formData).then((newEvent: any | null) => {
+            if (!newEvent) {
+                message.error("Cannot post the event!");
+                setVisible(false);
+                return;
+            }
+            console.log(newEvent);
+            // setLoading(false);
+            const newEventID = newEvent.id;
+            if (newEventID) {
+                patchEventToCase(caseData?.case_number, {
+                    events: [...caseData?.events, newEventID]
+                }).then((patchedCase: any | null) => {
+                    if (!patchedCase) {
+                        message.error("Cannot patch event to the case!");
+                        setVisible(false);
+                        return;
+                    }
+                    console.log(newEvent);
+                    setEventsData([...eventsData, newEvent]);
+                });
+            }
+        });
         setVisible(false);
     };
 
@@ -131,25 +136,42 @@ export const CaseData = (props: any) => {
             key: "date_of_the_event"
         },
         {
-            title: 'Associations',
-            key: 'associations',
+            title: "Associations",
+            key: "associations",
             render: (text: any, record: any) => (
                 <>
                     {moment(record.date_of_the_event).isBetween(
-                        moment(caseData?.date_of_onset_of_symptoms).subtract(3, "days"),
+                        moment(caseData?.date_of_onset_of_symptoms).subtract(
+                            3,
+                            "days"
+                        ),
                         caseData?.date_of_confirmation_of_infection_by_testing,
                         "day",
                         "[]"
-                    ) ? <Tag color="volcano">Possible Infector</Tag> : <></>}
+                    ) ? (
+                        <Tag color="volcano">Possible Infector</Tag>
+                    ) : (
+                        <></>
+                    )}
                     {moment(record.date_of_the_event).isBetween(
-                        moment(caseData?.date_of_onset_of_symptoms).add(2, "days"),
-                        moment(caseData?.date_of_onset_of_symptoms).add(14, "days"),
+                        moment(caseData?.date_of_onset_of_symptoms).add(
+                            2,
+                            "days"
+                        ),
+                        moment(caseData?.date_of_onset_of_symptoms).add(
+                            14,
+                            "days"
+                        ),
                         "day",
                         "[]"
-                    ) ? <Tag color="lime">Possibly Infected</Tag> : <></>}
+                    ) ? (
+                        <Tag color="lime">Possibly Infected</Tag>
+                    ) : (
+                        <></>
+                    )}
                 </>
-            ),
-        },
+            )
+        }
     ];
 
     const handleAdd = () => {
@@ -167,30 +189,35 @@ export const CaseData = (props: any) => {
         console.log(eventID);
         patchEventToCase(caseData?.case_number, {
             events: [...caseData?.events, eventID]
-        })
-            .then((patchedCase: any | null) => {
-                if (!patchedCase) {
-                    message.error('Cannot patch event to the case!');
-                    setExistingVisible(false);
-                    return;
-                }
-                const patchedEvent = allEventsData.filter((event: any) => {
-                    return eventID === event.id;
-                });
-                console.log(patchedEvent[0]);
-                setEventsData([...eventsData, patchedEvent[0]]);
-            })
+        }).then((patchedCase: any | null) => {
+            if (!patchedCase) {
+                message.error("Cannot patch event to the case!");
+                setExistingVisible(false);
+                return;
+            }
+            const patchedEvent = allEventsData.filter((event: any) => {
+                return eventID === event.id;
+            });
+            console.log(patchedEvent[0]);
+            setEventsData([...eventsData, patchedEvent[0]]);
+        });
         setExistingVisible(false);
     };
 
     const disabledDate = (current: any) => {
-        return current && 
-            (
-                current < moment(caseData?.date_of_onset_of_symptoms).subtract(14, "days") 
-                || 
-                current > moment(caseData?.date_of_confirmation_of_infection_by_testing).endOf("day")
-            )
-    }
+        return (
+            current &&
+            (current <
+                moment(caseData?.date_of_onset_of_symptoms).subtract(
+                    14,
+                    "days"
+                ) ||
+                current >
+                    moment(
+                        caseData?.date_of_confirmation_of_infection_by_testing
+                    ).endOf("day"))
+        );
+    };
 
     return (
         <>
@@ -269,9 +296,11 @@ export const CaseData = (props: any) => {
             <Table
                 onRow={(record, rowIndex) => {
                     return {
-                        onClick: event => {history.push(`/event-data/${record.id}`)}
+                        onClick: (event) => {
+                            history.push(`/event-data/${record.id}`);
+                        }
                     };
-                }} 
+                }}
                 columns={columns}
                 dataSource={eventsData}
                 rowKey={"id"}
