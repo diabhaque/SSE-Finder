@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { Redirect, useHistory } from "react-router-dom";
+import { /*Redirect,*/ useHistory } from "react-router-dom";
 import { Case } from "../types/caseTypes_trial";
-import { Form, Input, Button, Spin, DatePicker } from "antd";
+import { Form, Input, Button, Spin, DatePicker, message } from "antd";
 import { postCase } from "../client/requests"
 
 export const AddCasePage = () => {
     const history = useHistory();
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(false);
+    //const [error, setError] = useState(false);
     const [form] = Form.useForm();
 
     const onFinish = async (values: any) => {
@@ -21,13 +21,16 @@ export const AddCasePage = () => {
             date_of_confirmation_of_infection_by_testing: values.dateOfCaseConfirmed.format("YYYY-MM-DD")
         };
         postCase(formData).then((newCase: Case | null) => {
+            if (!newCase) {
+                message.error('Cannot add the case to server!');
+                setLoading(false);
+                return;
+            }
             console.log(newCase)
             setLoading(false);
-            if (newCase && newCase.case_number) {
+            if (newCase.case_number) {
                 history.push(`/case-data/${newCase?.case_number}`);
             }
-        }).catch((err) => {
-            //Error handling: For example duplicate identify_document_number
         })
     };
 

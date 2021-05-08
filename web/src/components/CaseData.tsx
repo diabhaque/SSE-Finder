@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import { Descriptions, Table, Button, Space } from "antd";
+import { Descriptions, Table, Button, Space, message } from "antd";
 import { useState, useEffect } from "react";
 import { Case } from "../types/caseTypes_trial";
 import { AddEventDataModal } from "./AddEventDataModal";
@@ -21,6 +21,7 @@ export const CaseData = (props: any) => {
     const [existingVisible, setExistingVisible] = useState(false);
     const [eventsData, setEventsData] = useState<any | null>([]);
     const [allEventsData, setAllEventsData] = useState<any | null>([]);
+    const [buttonDisable, setButtonDisable] = useState(true);
 
     const [caseData, setCaseData] = useState<Case | null>({
         case_number: null,
@@ -34,25 +35,28 @@ export const CaseData = (props: any) => {
 
     useEffect(() => {
         getCase(caseID).then((fetchedCase: Case | null) => {
+            if (!fetchedCase) {
+                message.error('Cannot find the case!');
+                return;
+            }
             setCaseData(fetchedCase);
             console.log(fetchedCase?.events);
-            if (fetchedCase) {
-                getEvents().then((fetchedEvents: any | null) => {
-                    setAllEventsData(fetchedEvents);
-                    if (fetchedEvents) {
-                        setEventsData(
-                            fetchedEvents.filter((fetchedEvent: any) => {
-                                return fetchedCase?.events.includes(
-                                    fetchedEvent.id
-                                );
-                            })
+            setButtonDisable(false);
+            getEvents().then((fetchedEvents: any | null) => {  
+                if (!fetchedEvents) {
+                    message.error('Cannot find the events of the case!');
+                    return;
+                }
+                setAllEventsData(fetchedEvents);
+                setEventsData(
+                    fetchedEvents.filter((fetchedEvent: any) => {
+                        return fetchedCase?.events.includes(
+                            fetchedEvent.id
                         );
-                    }
-                });
-            }
-        }).catch((err)=>{
-            console.log("error happened")
-        });
+                    })
+                );
+            });
+        })
     }, [caseID, location]);
 
     const onCreate = (values: any) => {
@@ -68,23 +72,27 @@ export const CaseData = (props: any) => {
 
         postEvent(formData)
             .then((newEvent: any | null) => {
+                if (!newEvent) {
+                    message.error('Cannot post the event!');
+                    return;
+                }
                 console.log(newEvent);
                 // setLoading(false);
                 const newEventID = newEvent.id;
-                if (newEvent && newEventID) {
+                if (newEventID) {
                     patchEventToCase(caseData?.case_number, {
                         events: [...caseData?.events, newEventID]
                     })
                         .then((patchedCase: any | null) => {
+                            if (!patchedCase) {
+                                message.error('Cannot patch event to the case!');
+                                return;
+                            }
                             console.log(newEvent);
                             setEventsData([...eventsData, newEvent]);
                         })
-                        .catch((err) => {});
                 }
             })
-            .catch((err) => {
-                //Error handling: For example duplicate identify_document_number
-            });
         setVisible(false);
     };
 
@@ -139,7 +147,7 @@ export const CaseData = (props: any) => {
         })
             .then((patchedCase: any | null) => {
                 const patchedEvent = allEventsData.filter((event: any) => {
-                    return eventID == event.id;
+                    return eventID === event.id;
                 });
                 console.log(patchedEvent[0]);
                 setEventsData([...eventsData, patchedEvent[0]]);
@@ -204,6 +212,7 @@ export const CaseData = (props: any) => {
                         style={{
                             marginBottom: 16
                         }}
+                        disabled={buttonDisable}
                     >
                         Add New Event
                     </Button>
@@ -214,6 +223,7 @@ export const CaseData = (props: any) => {
                         style={{
                             marginBottom: 16
                         }}
+                        disabled={buttonDisable}
                     >
                         Add Existing Event
                     </Button>

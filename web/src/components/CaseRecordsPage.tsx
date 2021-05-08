@@ -20,12 +20,20 @@ export const CaseRecordsPage = () => {
 
     useEffect(() => {
         getCases().then((cases: Case[] | null) => {
+            if (!cases) {
+                message.error('Cannot retrieve cases!');
+            }
             setCaseData(cases)
         })
     }, []);
 
-    const onSearch = (caseNumber: String) => {
-        getCase(caseNumber).then((fetchedCase: Case | null) => {
+    const onSearch = (caseNumber: string) => {
+        const caseNumberInt = parseInt(caseNumber)
+        if (!caseNumberInt) {
+            message.error('Please enter a number!');
+            return;
+        }
+        getCase(caseNumberInt.toString()).then((fetchedCase: Case | null) => {
             // Catch query errors (Since requests.ts return null if error, need to catch on .then)
             console.log(fetchedCase)
             if (!fetchedCase) {
@@ -33,7 +41,7 @@ export const CaseRecordsPage = () => {
                 return;
             }
             history.push({
-                pathname: `/case-data/${caseNumber}`,
+                pathname: `/case-data/${caseNumberInt.toString()}`,
                 state: fetchedCase
               });
         })

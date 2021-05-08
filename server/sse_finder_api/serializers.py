@@ -22,7 +22,7 @@ class CaseSerializer(serializers.ModelSerializer):
         extra_kwargs = {'events': {'required': False}}
 
 class EventSerializer(serializers.ModelSerializer):
-    cases = CaseSerializer(many=True)
+    cases = CaseSerializer(many=True, read_only=True)
     class Meta:
         model = Event
         fields = (

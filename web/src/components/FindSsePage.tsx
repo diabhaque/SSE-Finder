@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { Button, DatePicker, Form, Spin, Table } from "antd";
+import { Button, DatePicker, Form, Spin, Table, message } from "antd";
 import { getEvents } from "../client/requests";
 
 export const FindSsePage = () => {
     const [loading, setLoading] = useState(false);
     const [sseData, setSseData] = useState<any>([]);
-    const [allEventsData, setAllEventsData] = useState<any | null>([]);
+    //const [allEventsData, setAllEventsData] = useState<any | null>([]);
     const [form] = Form.useForm();
 
     const onFinish = async (values: any) => {
@@ -20,7 +20,7 @@ export const FindSsePage = () => {
 
         getEvents()
             .then((fetchedEvents: any | null) => {
-                setAllEventsData(fetchedEvents);
+                //setAllEventsData(fetchedEvents);
                 if (fetchedEvents) {
                     const fetchedSseData = fetchedEvents.filter(
                         (fetchedEvent: any) => {
@@ -34,8 +34,13 @@ export const FindSsePage = () => {
                         }
                     );
                     console.log(fetchedSseData);
+                    if (fetchedSseData.length === 0) {
+                        message.warning('No SSE found within the date range!');
+                    }
                     setSseData(fetchedSseData);
                     setLoading(false);
+                } else {
+                    message.error('Cannot retrieve events!');
                 }
             })
     };
