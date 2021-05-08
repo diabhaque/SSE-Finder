@@ -2,7 +2,8 @@ import { useState } from "react";
 import { /*Redirect,*/ useHistory } from "react-router-dom";
 import { Case } from "../types/caseTypes_trial";
 import { Form, Input, Button, Spin, DatePicker, message } from "antd";
-import { postCase } from "../client/requests"
+import { postCase } from "../client/requests";
+import moment from 'moment';
 
 export const AddCasePage = () => {
     const history = useHistory();
@@ -103,7 +104,7 @@ export const AddCasePage = () => {
                         }
                     ]}
                 >
-                    <DatePicker />
+                    <DatePicker defaultPickerValue={moment("1990-01-01")} />
                 </Form.Item>
 
                 <Form.Item

@@ -9,4 +9,4 @@ Click case -> case details
 
 Pagination? 
 
-Date of birth default date
+Date of birth default date (Done)
