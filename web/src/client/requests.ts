@@ -47,6 +47,29 @@ export const getEvents = (): Promise<any[] | null> => {
         });
 };
 
+export const getEvent = (eventID: string): Promise<any | null> => {
+    const url = new URL(`http://${getHostName()}/api/events/${eventID}`);
+    const request = new Request(url.toString());
+    
+    let ok = false;
+    return fetch(request)
+        .then((r) => {
+            ok = r.ok;
+            return r.json();
+        })
+        .then((r) => {
+            if (ok) {
+                return r as any;
+            } else {
+                return null;
+            }
+        })
+        .catch((err)=>{
+            console.log(err)
+            return null
+        });
+};
+
 export const getCase = (caseID: String): Promise<Case | null> => {
     const url = new URL(`http://${getHostName()}/api/cases/${caseID}`);
     const request = new Request(url.toString());

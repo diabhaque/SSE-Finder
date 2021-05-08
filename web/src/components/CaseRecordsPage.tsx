@@ -82,8 +82,13 @@ export const CaseRecordsPage = () => {
 
     return (
         <div>
-            <Search placeholder="Enter case number"  onSearch={onSearch} />
+            <Search placeholder="Enter case number"  onSearch={onSearch} style={{marginBottom: 16}} />
             <Table
+                onRow={(record, rowIndex) => {
+                    return {
+                        onClick: event => {history.push(`/case-data/${record.case_number}`)}
+                    };
+                }}
                 rowKey="case_number"
                 columns={columns}
                 dataSource={caseData}

@@ -101,7 +101,20 @@ export const AddCasePage = () => {
                         {
                             required: true,
                             message: "Please select Date of Birth"
-                        }
+                        },
+                        ({ getFieldValue }) => ({
+                            validator(_, value) {
+                              if (!value) {
+                                return Promise.resolve();
+                              }
+
+                              if (moment(value) > moment(getFieldValue('dateOfOnset')) || moment(value) > moment(getFieldValue('dateOfOnset'))) {
+                                return Promise.reject(new Error('Date of Birth cannot be later than Date of Onset and Date of Case Confirmed!'));
+                              }
+                
+                              return Promise.resolve();
+                            },
+                          }),
                     ]}
                 >
                     <DatePicker defaultPickerValue={moment("1990-01-01")} />

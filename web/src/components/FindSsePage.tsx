@@ -1,8 +1,11 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom"
 import { Button, DatePicker, Form, Spin, Table, message } from "antd";
 import { getEvents } from "../client/requests";
 
 export const FindSsePage = () => {
+    const history = useHistory();
+
     const [loading, setLoading] = useState(false);
     const [sseData, setSseData] = useState<any>([]);
     //const [allEventsData, setAllEventsData] = useState<any | null>([]);
@@ -131,7 +134,16 @@ export const FindSsePage = () => {
                 </Form.Item>
             </Form>
             <br />
-            <Table columns={columns} dataSource={sseData} />
+            <Table 
+                onRow={(record, rowIndex) => {
+                    return {
+                        onClick: event => {history.push(`/event-data/${record.id}`)}
+                    };
+                }} 
+                columns={columns} 
+                dataSource={sseData} 
+                rowKey="id" 
+            />
         </div>
     );
 };

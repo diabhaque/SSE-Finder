@@ -6,12 +6,14 @@ interface AddEventDataModalProps {
     visible: boolean;
     onCreate: (values: Location) => void;
     onCancel: () => void;
+    disabledDate: (current: any) => boolean;
 }
 
 export const AddEventDataModal = ({
     visible,
     onCreate,
-    onCancel
+    onCancel,
+    disabledDate
 }: AddEventDataModalProps) => {
     const [form] = Form.useForm();
     const formRef: any = createRef();   
@@ -143,7 +145,7 @@ export const AddEventDataModal = ({
                         }
                     ]}
                 >
-                    <DatePicker />
+                    <DatePicker disabledDate={disabledDate} />
                 </Form.Item>
                 <Form.Item
                     name="descriptions"

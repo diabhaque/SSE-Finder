@@ -1,5 +1,5 @@
-import { useLocation } from "react-router-dom";
-import { Descriptions, Table, Button, Space, message } from "antd";
+import { useLocation, useHistory } from "react-router-dom";
+import { Descriptions, Table, Button, Space, message, Tag } from "antd";
 import { useState, useEffect } from "react";
 import { Case } from "../types/caseTypes_trial";
 import { AddEventDataModal } from "./AddEventDataModal";
@@ -10,10 +10,12 @@ import {
     patchEventToCase,
     postEvent
 } from "../client/requests";
+import moment from "moment";
 
 // Create an add existing event data modal which queries and gets old events, then allows user to pick and submit from one of them.
 
 export const CaseData = (props: any) => {
+    const history = useHistory();
     const location = useLocation();
     const caseID = location.pathname.split("/")[2];
     // should be loaded with useeffect and set to state.
@@ -47,7 +49,11 @@ export const CaseData = (props: any) => {
                     message.error('Cannot find the events of the case!');
                     return;
                 }
-                setAllEventsData(fetchedEvents);
+                setAllEventsData(fetchedEvents.filter((fetchedEvent: any) => {
+                    return moment(fetchedEvent.date_of_the_event) >= moment(fetchedCase?.date_of_onset_of_symptoms).subtract(14,"days") 
+                        && 
+                    moment(fetchedEvent.date_of_the_event) < moment(fetchedCase?.date_of_confirmation_of_infection_by_testing).endOf("day")
+                }));
                 setEventsData(
                     fetchedEvents.filter((fetchedEvent: any) => {
                         return fetchedCase?.events.includes(
@@ -73,7 +79,8 @@ export const CaseData = (props: any) => {
         postEvent(formData)
             .then((newEvent: any | null) => {
                 if (!newEvent) {
-                    message.error('Cannot post the event!');
+                    message.error("Cannot post the event!");
+                    setVisible(false);
                     return;
                 }
                 console.log(newEvent);
@@ -86,6 +93,7 @@ export const CaseData = (props: any) => {
                         .then((patchedCase: any | null) => {
                             if (!patchedCase) {
                                 message.error('Cannot patch event to the case!');
+                                setVisible(false);
                                 return;
                             }
                             console.log(newEvent);
@@ -123,10 +131,25 @@ export const CaseData = (props: any) => {
             key: "date_of_the_event"
         },
         {
-            title: "Descriptions",
-            dataIndex: "description_of_the_event",
-            key: "description_of_the_event"
-        }
+            title: 'Associations',
+            key: 'associations',
+            render: (text: any, record: any) => (
+                <>
+                    {moment(record.date_of_the_event).isBetween(
+                        moment(caseData?.date_of_onset_of_symptoms).subtract(3, "days"),
+                        caseData?.date_of_confirmation_of_infection_by_testing,
+                        "day",
+                        "[]"
+                    ) ? <Tag color="volcano">Possible Infector</Tag> : <></>}
+                    {moment(record.date_of_the_event).isBetween(
+                        moment(caseData?.date_of_onset_of_symptoms).add(2, "days"),
+                        moment(caseData?.date_of_onset_of_symptoms).add(14, "days"),
+                        "day",
+                        "[]"
+                    ) ? <Tag color="lime">Possibly Infected</Tag> : <></>}
+                </>
+            ),
+        },
     ];
 
     const handleAdd = () => {
@@ -146,15 +169,28 @@ export const CaseData = (props: any) => {
             events: [...caseData?.events, eventID]
         })
             .then((patchedCase: any | null) => {
+                if (!patchedCase) {
+                    message.error('Cannot patch event to the case!');
+                    setExistingVisible(false);
+                    return;
+                }
                 const patchedEvent = allEventsData.filter((event: any) => {
                     return eventID === event.id;
                 });
                 console.log(patchedEvent[0]);
                 setEventsData([...eventsData, patchedEvent[0]]);
             })
-            .catch((err) => {});
         setExistingVisible(false);
     };
+
+    const disabledDate = (current: any) => {
+        return current && 
+            (
+                current < moment(caseData?.date_of_onset_of_symptoms).subtract(14, "days") 
+                || 
+                current > moment(caseData?.date_of_confirmation_of_infection_by_testing).endOf("day")
+            )
+    }
 
     return (
         <>
@@ -164,6 +200,7 @@ export const CaseData = (props: any) => {
                 onCancel={() => {
                     setVisible(false);
                 }}
+                disabledDate={disabledDate}
             />
             <AddExistingEventDataModal
                 visible={existingVisible}
@@ -230,10 +267,16 @@ export const CaseData = (props: any) => {
                 </Space>
             </div>
             <Table
+                onRow={(record, rowIndex) => {
+                    return {
+                        onClick: event => {history.push(`/event-data/${record.id}`)}
+                    };
+                }} 
                 columns={columns}
                 dataSource={eventsData}
                 scroll={{ y: "45vh" }}
                 pagination={false}
+                rowKey={"id"}
             />
         </>
     );

@@ -27,14 +27,14 @@ export const AddExistingEventDataModal = ({
 
     const options = remainingEvents.map((event) => (
         <Option key={event.id} value={event.id}>
-            {`${event.id}, ${event.venue_location}`}
+            {`${event.id}, ${event.venue_name}, ${event.venue_location}, ${event.date_of_the_event}`}
         </Option>
     ));
 
     return (
         <Modal
             visible={visible}
-            title="Add an existing Location"
+            title="Add an existing Event that is between 14 days before Day of Onset of Symptoms and Day of Confirmation of Infection"
             okText="Add"
             cancelText="Cancel"
             onCancel={onCancel}
