@@ -79,9 +79,12 @@ export const EventData = (props: any) => {
                     ) : (
                         <></>
                     )}
-                    {moment(eventData.date_of_the_event).isBetween(
-                        moment(record.date_of_onset_of_symptoms).add(2, "days"),
-                        moment(record.date_of_onset_of_symptoms).add(
+                    {moment(record?.date_of_onset_of_symptoms).isBetween(
+                        moment(eventData.date_of_the_event).add(
+                            2,
+                            "days"
+                        ),
+                        moment(eventData.date_of_the_event).add(
                             14,
                             "days"
                         ),
