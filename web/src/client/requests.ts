@@ -25,7 +25,7 @@ export const getCases = (): Promise<Case[] | null> => {
 };
 
 export const getEvents = (): Promise<any[] | null> => {
-    const url = new URL(`http://${getHostName()}/api/events`);
+    const url = new URL(`https://${getHostName()}/api/events`);
     const request = new Request(url.toString());
 
     let ok = false;
@@ -48,7 +48,7 @@ export const getEvents = (): Promise<any[] | null> => {
 };
 
 export const getEvent = (eventID: string): Promise<any | null> => {
-    const url = new URL(`http://${getHostName()}/api/events/${eventID}`);
+    const url = new URL(`https://${getHostName()}/api/events/${eventID}`);
     const request = new Request(url.toString());
 
     let ok = false;
@@ -94,7 +94,7 @@ export const getCase = (caseID: String): Promise<Case | null> => {
 };
 
 export const postCase = (postCase: Case): Promise<Case | null> => {
-    const url = new URL(`http://${getHostName()}/api/cases/`);
+    const url = new URL(`https://${getHostName()}/api/cases/`);
 
     let ok = false;
     return fetch(url.toString(), {
@@ -155,7 +155,7 @@ export const getLocation = (
 };
 
 export const postEvent = (postEvent: any): Promise<any | null> => {
-    const url = new URL(`http://${getHostName()}/api/events/`);
+    const url = new URL(`https://${getHostName()}/api/events/`);
 
     let ok = false;
     return fetch(url.toString(), {
@@ -186,7 +186,7 @@ export const patchEventToCase = (
     case_id: any,
     patch: any
 ): Promise<any | null> => {
-    const url = new URL(`http://${getHostName()}/api/cases/${case_id}/`);
+    const url = new URL(`https://${getHostName()}/api/cases/${case_id}/`);
 
     let ok = false;
     return fetch(url.toString(), {
