@@ -18,6 +18,7 @@ export const AddEventDataModal = ({
 
     //Leaving all as any for now, save time
     const handleLocationChange = (event: any) => {
+
         getLocation(event.target.value).then((fetchedLocation: any) => {
             if (fetchedLocation) {
                 formRef.current.setFieldsValue({

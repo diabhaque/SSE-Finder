@@ -27,6 +27,7 @@ export const CaseRecordsPage = () => {
     const onSearch = (caseNumber: String) => {
         getCase(caseNumber).then((fetchedCase: Case | null) => {
             // Catch query errors (Since requests.ts return null if error, need to catch on .then)
+            console.log(fetchedCase)
             if (!fetchedCase) {
                 message.error('Case number not found!');
                 return;

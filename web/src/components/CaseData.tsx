@@ -1,15 +1,26 @@
 import { useLocation } from "react-router-dom";
-import { Descriptions, Table, Button } from "antd";
+import { Descriptions, Table, Button, Space } from "antd";
 import { useState, useEffect } from "react";
 import { Case } from "../types/caseTypes_trial";
 import { AddEventDataModal } from "./AddEventDataModal";
-import { getCase } from "../client/requests"
+import { AddExistingEventDataModal } from "./AddExistingEventDataModal";
+import {
+    getCase,
+    getEvents,
+    patchEventToCase,
+    postEvent
+} from "../client/requests";
+
+// Create an add existing event data modal which queries and gets old events, then allows user to pick and submit from one of them.
 
 export const CaseData = (props: any) => {
     const location = useLocation();
     const caseID = location.pathname.split("/")[2];
     // should be loaded with useeffect and set to state.
     const [visible, setVisible] = useState(false);
+    const [existingVisible, setExistingVisible] = useState(false);
+    const [eventsData, setEventsData] = useState<any | null>([]);
+    const [allEventsData, setAllEventsData] = useState<any | null>([]);
 
     const [caseData, setCaseData] = useState<Case | null>({
         case_number: null,
@@ -17,80 +28,124 @@ export const CaseData = (props: any) => {
         identify_document_number: null,
         date_of_birth: null,
         date_of_onset_of_symptoms: null,
-        date_of_confirmation_of_infection_by_testing: null
+        date_of_confirmation_of_infection_by_testing: null,
+        events: []
     });
 
     useEffect(() => {
-        if (location?.state) {
-            setCaseData(location.state as Case)
-        } else {
-            getCase(caseID).then((fetchedCase: Case | null) => {
-                setCaseData(fetchedCase)
-            })
-        }
+        getCase(caseID).then((fetchedCase: Case | null) => {
+            setCaseData(fetchedCase);
+            console.log(fetchedCase?.events);
+            if (fetchedCase) {
+                getEvents().then((fetchedEvents: any | null) => {
+                    setAllEventsData(fetchedEvents);
+                    if (fetchedEvents) {
+                        setEventsData(
+                            fetchedEvents.filter((fetchedEvent: any) => {
+                                return fetchedCase?.events.includes(
+                                    fetchedEvent.id
+                                );
+                            })
+                        );
+                    }
+                });
+            }
+        }).catch((err)=>{
+            console.log("error happened")
+        });
     }, [caseID, location]);
 
     const onCreate = (values: any) => {
         console.log("Received values of form: ", values);
         const formData = {
-            venueName: values.venueName,
-            venueLocation: values.venueLocation,
-            address: values.address,
-            x: values.x,
-            y: values.y,
-            dateOfEvent: values.dateOfEvent.format("DD-MM-YYYY"),
-            descriptions: values.descriptions
+            venue_name: values.venueName,
+            venue_location: values.venueLocation,
+            address_of_the_venue_location: values.address,
+            hk1980_grid_coordinates_of_the_venue_location: `(${values.x}, ${values.y})`,
+            date_of_the_event: values.dateOfEvent.format("YYYY-MM-DD"),
+            description_of_the_event: values.descriptions
         };
 
-        // do post request to add data to venue
-        // add data to state
-
-        setEventsData([...eventsData, formData]);
+        postEvent(formData)
+            .then((newEvent: any | null) => {
+                console.log(newEvent);
+                // setLoading(false);
+                const newEventID = newEvent.id;
+                if (newEvent && newEventID) {
+                    patchEventToCase(caseData?.case_number, {
+                        events: [...caseData?.events, newEventID]
+                    })
+                        .then((patchedCase: any | null) => {
+                            console.log(newEvent);
+                            setEventsData([...eventsData, newEvent]);
+                        })
+                        .catch((err) => {});
+                }
+            })
+            .catch((err) => {
+                //Error handling: For example duplicate identify_document_number
+            });
         setVisible(false);
     };
-
-    const [eventsData, setEventsData] = useState<any>([]);
 
     const columns = [
         {
             title: "Venue Name",
-            dataIndex: "venueName",
-            key: "venueName"
+            dataIndex: "venue_name",
+            key: "venue_name"
         },
         {
             title: "Venue Location",
-            dataIndex: "venueLocation",
-            key: "venueLocation"
+            dataIndex: "venue_location",
+            key: "venue_location"
         },
         {
             title: "Address",
-            dataIndex: "address",
-            key: "address"
+            dataIndex: "address_of_the_venue_location",
+            key: "address_of_the_venue_location"
         },
         {
-            title: "HK1980 X Coordinate",
-            dataIndex: "x",
-            key: "x"
-        },
-        {
-            title: "HK1980 Y Coordinate",
-            dataIndex: "y",
-            key: "y"
+            title: "HK1980 Coordinate",
+            dataIndex: "hk1980_grid_coordinates_of_the_venue_location",
+            key: "hk1980_grid_coordinates_of_the_venue_location"
         },
         {
             title: "Date of Event",
-            dataIndex: "dateOfEvent",
-            key: "dateOfEvent"
+            dataIndex: "date_of_the_event",
+            key: "date_of_the_event"
         },
         {
             title: "Descriptions",
-            dataIndex: "descriptions",
-            key: "descriptions"
+            dataIndex: "description_of_the_event",
+            key: "description_of_the_event"
         }
     ];
 
     const handleAdd = () => {
         setVisible(true);
+    };
+
+    const handleExistingAdd = () => {
+        setExistingVisible(true);
+    };
+
+    const onExistingCreate = (values: any) => {
+        // performPatchRequest
+        // filter from all events by id and add
+        const eventID = values.eventID;
+        console.log(eventID);
+        patchEventToCase(caseData?.case_number, {
+            events: [...caseData?.events, eventID]
+        })
+            .then((patchedCase: any | null) => {
+                const patchedEvent = allEventsData.filter((event: any) => {
+                    return eventID == event.id;
+                });
+                console.log(patchedEvent[0]);
+                setEventsData([...eventsData, patchedEvent[0]]);
+            })
+            .catch((err) => {});
+        setExistingVisible(false);
     };
 
     return (
@@ -102,7 +157,16 @@ export const CaseData = (props: any) => {
                     setVisible(false);
                 }}
             />
-            <br/>
+            <AddExistingEventDataModal
+                visible={existingVisible}
+                onCreate={onExistingCreate}
+                onCancel={() => {
+                    setExistingVisible(false);
+                }}
+                allEvents={allEventsData ? allEventsData : []}
+                alreadyAddedEvents={caseData ? caseData?.events : []}
+            />
+            <br />
             <Descriptions
                 title="Case Details"
                 layout="horizontal"
@@ -128,20 +192,32 @@ export const CaseData = (props: any) => {
                     {caseData?.date_of_confirmation_of_infection_by_testing}
                 </Descriptions.Item>
             </Descriptions>
-            <br/>
+            <br />
             <div className="ant-descriptions-header">
                 <div className="ant-descriptions-title">
                     Social Events attended
                 </div>
-                <Button
-                    onClick={handleAdd}
-                    type="primary"
-                    style={{
-                        marginBottom: 16
-                    }}
-                >
-                    Add Event
-                </Button>
+                <Space>
+                    <Button
+                        onClick={handleAdd}
+                        type="primary"
+                        style={{
+                            marginBottom: 16
+                        }}
+                    >
+                        Add New Event
+                    </Button>
+
+                    <Button
+                        onClick={handleExistingAdd}
+                        type="primary"
+                        style={{
+                            marginBottom: 16
+                        }}
+                    >
+                        Add Existing Event
+                    </Button>
+                </Space>
             </div>
             <Table
                 columns={columns}

@@ -195,3 +195,13 @@ def CaseViewSet(request):
     output = ', '.join([q.person_name for q in queryset])
     return HttpResponse(output)
 """
+
+{
+    "case_number": "1",
+    "date_of_the_event": "2021-05-07",
+    "venue_name": "Stadium",
+    "venue_location": "asdfgh",
+    "address_of_the_venue_location": "asdfgh",
+    "hk1980_grid_coordinates_of_the_venue_location": "asdfghj",
+    "description_of_the_event": "asdfghjkl"
+}

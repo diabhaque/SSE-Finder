@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     # Used for boilerplate, delete later
     "trial_delete_later",
+    "sse_finder_api"
 ]
 
 MIDDLEWARE = [
